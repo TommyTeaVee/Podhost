@@ -1,0 +1,114 @@
+### AUTH ROUTES
+# REGISTER
+POST http://localhost:5050/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+# LOGIN
+POST http://localhost:5050/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+### PODCAST ROUTES
+# CREATE PODCAST (AUTH REQUIRED)
+POST http://localhost:5050/api/podcasts
+Authorization: Bearer {{JWT_TOKEN}}
+Content-Type: application/json
+
+{
+  "title": "My First Podcast",
+  "description": "About tech and innovation"
+}
+
+###
+# GET ALL PODCASTS
+GET http://localhost:5050/api/podcasts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlNDU5NTQyLWQzM2EtNDI5Ny1iMGU4LWZlOWNiNmM4NDI2MiIsImlhdCI6MTc0ODcxODUyNCwiZXhwIjoxNzQ5MzIzMzI0fQ.8ygICHEvgSTlo9WoXHnb3UP8mkpicZs1QXlGkaPfoaE
+
+###
+# GET SINGLE PODCAST
+GET http://localhost:5050/api/podcasts/{{PODCAST_ID}}
+
+###
+
+### EPISODE ROUTES
+# CREATE EPISODE (AUTH REQUIRED)
+POST http://localhost:5050/api/episodes
+Authorization: Bearer {{JWT_TOKEN}}
+Content-Type: application/json
+
+{
+  "title": "Episode 1",
+  "description": "This is episode 1",
+  "audioUrl": "https://s3.amazonaws.com/bucket/audio.mp3",
+  "podcastId": "{{PODCAST_ID}}"
+}
+
+###
+# GET EPISODES BY PODCAST
+GET http://localhost:5050/api/episodes?podcastId={{PODCAST_ID}}
+
+###
+
+### COMMENT ROUTES
+# POST COMMENT (AUTH REQUIRED)
+POST http://localhost:5050/api/comments
+Authorization: Bearer {{JWT_TOKEN}}
+Content-Type: application/json
+
+{
+  "episodeId": "{{EPISODE_ID}}",
+  "comment": "Great episode!"
+}
+
+###
+# GET COMMENTS FOR EPISODE
+GET http://localhost:5050/api/comments/{{EPISODE_ID}}
+
+###
+
+### DONATION ROUTES
+# CREATE PAYMENT INTENT (AUTH REQUIRED)
+POST http://localhost:5050/api/donations/create
+Authorization: Bearer {{JWT_TOKEN}}
+Content-Type: application/json
+
+{
+  "amount": 500,
+  "podcastId": "{{PODCAST_ID}}"
+}
+
+###
+
+### ADMIN ROUTES
+# GET ALL USERS (ADMIN ONLY)
+GET http://localhost:5050/api/admin/users
+Authorization: Bearer {{ADMIN_JWT}}
+
+###
+# BAN USER (ADMIN ONLY)
+PUT http://localhost:5050/api/admin/users/ban
+Authorization: Bearer {{ADMIN_JWT}}
+Content-Type: application/json
+
+{
+  "userId": "{{USER_ID}}"
+}
+
+###
+# DELETE PODCAST (ADMIN ONLY)
+DELETE http://localhost:5050/api/admin/podcasts/{{PODCAST_ID}}
+Authorization: Bearer {{ADMIN_JWT}}
+

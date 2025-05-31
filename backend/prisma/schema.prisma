@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(uuid())
+  email           String            @unique
+  username        String
+  fullname        String
+  lastname        String
+  password        String
+  isAdmin         Boolean           @default(false)
+  role            Role              @default(USER)
+  podcasts        Podcast[]
+  comments        Comment[]
+  donations       Donation[]
+  createdAt       DateTime          @default(now())
+  ListenerSession ListenerSession[]
+
+  Reward Reward[]
+}
+
+model Podcast {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  episodes    Episode[]
+  comments    Comment[]
+  donations   Donation[]
+  reported    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+}
+
+model Episode {
+  id              String            @id @default(uuid())
+  title           String
+  description     String?
+  audioUrl        String
+  podcastId       String
+  reported        Boolean           @default(false)
+  podcast         Podcast           @relation(fields: [podcastId], references: [id])
+  createdAt       DateTime          @default(now())
+  ListenerSession ListenerSession[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  podcast   Podcast  @relation(fields: [podcastId], references: [id])
+  podcastId String
+  reported  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Donation {
+  id        String   @id @default(uuid())
+  userId    String
+  podcastId String
+  amount    Float
+  user      User     @relation(fields: [userId], references: [id])
+  podcast   Podcast  @relation(fields: [podcastId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Reward {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  xp     Int
+  badge  String
+}
+
+model ListenerSession {
+  id        String   @id @default(uuid())
+  userId    String
+  episodeId String
+  duration  Int // in seconds
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  episode Episode @relation(fields: [episodeId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
