@@ -1,19 +1,22 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding...');
 
-  const passwordHash = await bcrypt.hash('password123', 10);
+  const bobPassHash = await bcrypt.hash(process.env.BOB_PASS, 20);
+  const alicePassHash = await bcrypt.hash(process.env.ALICE_PASS, 20);
+  const adminPassHash = await bcrypt.hash(process.env.ADMIN_PASS, 10);
 
   // USERS
   const bob = await prisma.user.create({
     data: {
       username: 'bob',
       email: 'bob@impilomag.co.za',
-      password: passwordHash,
+      password: bobPassHash,
       fullname: 'Bob Johnson',
       lastname: 'Johnson',
     },
@@ -23,7 +26,7 @@ async function main() {
     data: {
       username: 'alice',
       email: 'alice@mail.com',
-      password: passwordHash,
+      password: alicePassHash,
       fullname: 'Alice Peterson',
       lastname: 'Peterson',
     },
@@ -33,7 +36,7 @@ async function main() {
     data: {
       username: 'admin',
       email: 'admin@impilomag.co.za',
-      password: passwordHash,
+      password: adminPassHash,
       fullname: 'Admin User',
       lastname: 'User',
       isAdmin: true,
